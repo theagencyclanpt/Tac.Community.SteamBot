@@ -1,4 +1,3 @@
-//Initial
 require("dotenv").config();
 const CLIENT_MANAGEMENT = require("./modules/client-management")({
   accountName: process.env.ACCOUNT_NAME,
@@ -7,12 +6,32 @@ const CLIENT_MANAGEMENT = require("./modules/client-management")({
 });
 
 CLIENT_MANAGEMENT.SetCustomState({game: "ESCRAVO", state: CLIENT_MANAGEMENT.STEAM_USER.EPersonaState.Online});
+CLIENT_MANAGEMENT.SetTimeOut(1);
 
-CLIENT_MANAGEMENT.ChatGroupManagement(async (message)=> {
-	switch (message) {
-		case '/Test':
-			var mentionTag = await CLIENT_MANAGEMENT.Mention();
-			CLIENT_MANAGEMENT.Answer("/Test " + mentionTag);
-			break;
-	}
-});
+CLIENT_MANAGEMENT.AddCommand({
+	commandName: "/test", 
+	commandDescription: "Frist Command", 
+	commandTimeOut: 5,
+	commandCallback: async function(){
+		let mentionTag = await CLIENT_MANAGEMENT.Mention();
+		CLIENT_MANAGEMENT.Answer("/command example " + mentionTag);
+	}});
+
+CLIENT_MANAGEMENT.AddCommand({
+	commandName: "/one", 
+	commandDescription: "Command One", 
+	commandCallback: async function(){
+		let mentionTag = await CLIENT_MANAGEMENT.Mention();
+		CLIENT_MANAGEMENT.Answer("/command one " + mentionTag);
+	}});
+
+CLIENT_MANAGEMENT.AddCommand({
+	commandName: "/two", 
+	commandDescription: "Command Two", 
+	commandTimeOut: 5,
+	commandCallback: async function(){
+		let mentionTag = await CLIENT_MANAGEMENT.Mention();
+		CLIENT_MANAGEMENT.Answer("/command two " + mentionTag);
+	}});
+
+CLIENT_MANAGEMENT.ChatGroupManagement();
