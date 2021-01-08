@@ -21,13 +21,13 @@ async function GetMembersNames(steamDevKey, base64IdMembers) {
   return await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${base64IdsString}`);
 }
 
-function GetLastMessageData(userBase64, server_timestamp, selectEvent, timeout) {
+function GetLastMessageData(userBase64, server_timestamp, commandName, timeout) {
   let time = new Date(server_timestamp);
   time.setSeconds(time.getSeconds() + timeout);
 
   return {
     Time: time,
-    Command: selectEvent.commandName,
+    Command: commandName,
     UserIdBase64: userBase64
   };
 }
@@ -139,11 +139,10 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
               return this;
             }
 
+            this.LAST_MESSAGE = GetLastMessageData(this.STEAM_ID_SENDER_BASE64, server_timestamp, selectEvent.commandName, timeOutCalculated / 1000);
             setTimeout(() => {
               selectEvent.commandCallback(message);
             }, timeOutCalculated);
-            
-            this.LAST_MESSAGE = GetLastMessageData(this.STEAM_ID_SENDER_BASE64, server_timestamp, selectEvent.commandName, timeOutCalculated / 1000);
           }
         }
       );

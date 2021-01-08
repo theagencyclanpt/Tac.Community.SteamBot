@@ -7,7 +7,7 @@ const CLIENT_MANAGEMENT = require("./modules/client-management")({
 });
 
 CLIENT_MANAGEMENT.SetCustomState({game: "ESCRAVO", state: CLIENT_MANAGEMENT.STEAM_USER.EPersonaState.Online});
-CLIENT_MANAGEMENT.SetTimeOut(1);
+CLIENT_MANAGEMENT.SetTimeOut(4);
 CLIENT_MANAGEMENT.Init();
 
 CLIENT_MANAGEMENT.AddCommand({
