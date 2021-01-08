@@ -2,7 +2,23 @@ const axios = require('axios');
 const STEAM_USER = require("steam-user");
 
 async function GetSenderNickName(steamDevKey, steamIdBase64){
-    return await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${steamIdBase64}`);
+  return await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${steamIdBase64}`);
+}
+
+async function GetMembersNames(steamDevKey, base64IdMembers) {
+  let lastBase64 = base64IdMembers[base64IdMembers.length - 1];
+  let base64IdsString = '';
+  base64IdMembers.forEach(base64IdMember => {
+    base64IdsString = base64IdsString + base64IdMember;
+    
+    if(base64IdMember == lastBase64){
+      return;
+    }
+
+    base64IdsString = base64IdsString + ",";
+  });
+
+  return await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${base64IdsString}`);
 }
 
 function GetLastMessageData(userBase64, server_timestamp, selectEvent, timeout) {
@@ -16,7 +32,7 @@ function GetLastMessageData(userBase64, server_timestamp, selectEvent, timeout) 
   };
 }
 
-module.exports = ({ accountName, password, steamDevKey }) => {
+module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
   let client = new STEAM_USER();
   client.logOn({
     accountName: accountName,
@@ -34,9 +50,33 @@ module.exports = ({ accountName, password, steamDevKey }) => {
     CHAT_COMMANDS: [],
     TIME_OUT: 2,
     LAST_MESSAGE: {Command: null, Time: 0, UserIdBase64: 0},
+    ALL_MEMBERS: [],
+    BOT_ACCOUNT_ID: botAccountId,
     SetTimeOut: function(timeOut){
       this.TIME_OUT = timeOut;
       return this;
+    },
+    Init:async function () {
+      let oldThis = this;
+      this.STEAM_CLIENT.on('friendsList', function () {
+        oldThis.STEAM_CLIENT.chat.setSessionActiveGroups([17053990], async function (err, result) {
+          let membersBase64 = [];
+
+          result.chat_room_groups[17053990].members.forEach(member => {
+            if(oldThis.BOT_ACCOUNT_ID ==  member.steamid.accountid){
+              return;
+            }
+            membersBase64.push({base64: member.steamid.getSteamID64(), accountid: member.steamid.accountid});
+          });
+
+          let players = (await GetMembersNames(oldThis.STEAM_API_KEY, membersBase64.map((member) => member.base64))).data.response.players;
+
+          players.forEach(player => {
+            let tempMemberBase64 = membersBase64.find((member) => member.base64 == player.steamid);
+            oldThis.ALL_MEMBERS.push({accountid: tempMemberBase64.accountid, personaname: player.personaname});
+          });
+        });
+      });
     },
     AddCommand: function ({commandName, commandDescription, commandCallback, commandTimeOut}) {
       if(!commandCallback || !(typeof commandCallback === 'function')){
@@ -59,6 +99,15 @@ module.exports = ({ accountName, password, steamDevKey }) => {
         }
       return `[mention=${this.STEAM_ID_SENDER.accountid}]@${result.response.players[0].personaname}[/mention]`;  
     },
+    MentionAll: function () {
+      let mentionAllMembers = "";
+
+      this.ALL_MEMBERS.forEach(member => {
+        mentionAllMembers = mentionAllMembers + `[mention=${member.accountid}]@${member.personaname}[/mention] `
+      });
+
+      return mentionAllMembers;
+    },
     Answer: function(message){
         this.STEAM_CLIENT.chat.sendChatMessage(
             this.CHAT_GROUP_ID,
@@ -68,7 +117,7 @@ module.exports = ({ accountName, password, steamDevKey }) => {
         return this;
     },
     ChatGroupManagement: function()  {
-      this.STEAM_CLIENT.chat.on("chatMessage", ({ chat_group_id, chat_id, steamid_sender, message, server_timestamp }) => {
+      this.STEAM_CLIENT.chat.on("chatMessage", ({ chat_group_id, chat_id, steamid_sender, message, server_timestamp, mentions }) => {
           this.CHAT_GROUP_ID = chat_group_id;
           this.CHAT_ID = chat_id; 
           this.STEAM_ID_SENDER = steamid_sender;
@@ -93,7 +142,7 @@ module.exports = ({ accountName, password, steamDevKey }) => {
             setTimeout(() => {
               selectEvent.commandCallback(message);
             }, timeOutCalculated);
-
+            
             this.LAST_MESSAGE = GetLastMessageData(this.STEAM_ID_SENDER_BASE64, server_timestamp, selectEvent.commandName, timeOutCalculated / 1000);
           }
         }
