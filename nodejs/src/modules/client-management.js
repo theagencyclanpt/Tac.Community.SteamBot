@@ -56,7 +56,7 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
       this.TIME_OUT = timeOut;
       return this;
     },
-    Init:async function () {
+    Init:function () {
       let oldThis = this;
       this.STEAM_CLIENT.on('friendsList', function () {
         oldThis.STEAM_CLIENT.chat.setSessionActiveGroups([17053990], async function (err, result) {
@@ -77,6 +77,8 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
           });
         });
       });
+
+      return this;
     },
     AddCommand: function ({commandName, commandDescription, commandCallback, commandTimeOut}) {
       if(!commandCallback || !(typeof commandCallback === 'function')){
@@ -90,6 +92,8 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
           this.STEAM_CLIENT.setPersona(state);
           this.STEAM_CLIENT.gamesPlayed(game);
         });
+
+      return this;
     },
     Mention: async function () {
         try {
