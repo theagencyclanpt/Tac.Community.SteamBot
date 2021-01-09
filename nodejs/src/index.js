@@ -8,11 +8,9 @@ const CLIENT_MANAGEMENT = require("./modules/client-module")({
   botAccountId: process.env.BOT_ACCOUNT_ID
 });
 
-API({port: process.env.API_PORT});
+
 
 console.log(process.env.BOT_ACCOUNT_ID);
-
-return;
 
 CLIENT_MANAGEMENT
 	.SetCustomState({game: "ESCRAVO", state: CLIENT_MANAGEMENT.STEAM_USER.EPersonaState.Online})
@@ -60,3 +58,10 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandCallback: async function(){
 		CLIENT_MANAGEMENT.Answer("Boa noite juventude." + CLIENT_MANAGEMENT.MentionAll());
 	}});
+	
+API({port: process.env.API_PORT, client: CLIENT_MANAGEMENT});
+
+//
+
+
+return;

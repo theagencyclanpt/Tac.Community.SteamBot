@@ -1,7 +1,50 @@
 const EXPRESS = require('express');
 const BODY_PARSE = require('body-parser');
 
-module.exports = ({port}) => {
+function setupSomethingExtra(arguments) {
+	arguments.client.STEAM_CLIENT.chat.sendChatMessage(arguments.groupid, arguments.chatid, arguments.message);
+}
+
+function SetupReport(groupid, chatid, client, reportStatus, reportArguments){
+	
+	var message = "/pre ";
+	if(reportStatus == 0){
+		
+		client.STEAM_CLIENT.chat.sendChatMessage(groupid, chatid, client.MentionAll());
+
+		// Formata a mensagem em questão;
+		message = message +
+		"-------------- NOVO REPORT -------------\n" +
+		"ID do Report: " + reportArguments.reportID + "\n" + 
+		"Nome do Servidor: " + reportArguments.serverName + "\n" + 
+		"IP do Servidor: " + reportArguments.serverIP + "\n" + 
+		"Queixinhas: " + reportArguments.reportQueixinhasName + " (" + reportArguments.reportQueixinhasSteamID + ")\n" + 
+		"Alvo: " + reportArguments.reportAlvoName + " (" + reportArguments.reportAlvoSteamID + ")\n" + 
+		"Razão: " + reportArguments.reportReason + "\n" +
+		"----------------------------------------\n";
+
+		// Como vai enviar uma segunda mensagem (para conseguir enviar com o /pre), com 1 timeout de 4000
+		setTimeout(setupSomethingExtra, 4000, {
+			client : client,
+			groupid: groupid,
+			chatid: chatid,
+			message: message,
+		});
+
+
+	} else {
+		// Como nos reports resolvidos, não vai dar mentions, não é necessário colocar um timeout;
+		message = message + 
+			"----------- REPORT RESOLVIDO -----------\n" +
+			"ID do Report: " + reportArguments.reportID + "\n" + 
+			"Staff que Resolveu: " + reportArguments.reportStaffName + "\n" + 
+			"----------- REPORT RESOLVIDO -----------\n";
+		
+		client.STEAM_CLIENT.chat.sendChatMessage(groupid, chatid, message);
+	}
+}
+
+module.exports = ({port, client}) => {
 	const API = EXPRESS();
 	API.use(BODY_PARSE.urlencoded({ extended: true }));
 	
@@ -22,24 +65,27 @@ module.exports = ({port}) => {
 			- 1 -> Report resolvido;
 		*/
 		if(req.body.reportStatus == 0){
-			console.log("--------- NOVO REPORT ---------");
-			console.log('Server Name: ', req.body.serverName);
-			console.log('Server IP: ', req.body.serverIP);
-			console.log('ID do Report: ', req.body.reportID);
-			console.log('Nome do Queixinhas: ', req.body.reportQueixinhasName);
-			console.log('SteamID do Queixinhas: ', req.body.reportQueixinhasSteamID);
-			console.log('Nome do Alvo: ', req.body.reportAlvoName);
-			console.log('SteamID do Alvo: ', req.body.reportAlvoSteamID);
-			console.log('Razão do Report: ', req.body.reportReason);
-			console.log("-------------------------------");
+		
+			// Vai enviar um report, para a sala correta, tendo os dados necessários;
+			SetupReport("17053990", "56943144", client, req.body.reportStatus, {
+				serverName: req.body.serverName,
+				serverIP: req.body.serverIP,
+				reportID: req.body.reportID,
+				reportQueixinhasName: req.body.reportQueixinhasName,
+				reportQueixinhasSteamID: req.body.reportQueixinhasSteamID,
+				reportAlvoName: req.body.reportAlvoName,
+				reportAlvoSteamID: req.body.reportAlvoSteamID,
+				reportReason: req.body.reportReason
+			});
 	
 		} else {
-			console.log("--------- REPORT RESOLVIDO ---------");
-			console.log('ID do Report: ', req.body.reportID);
-			console.log('Nome do Staff que resolveu: ', req.body.reportStaffName);
-			console.log("------------------------------------");
+
+			SetupReport("17053990", "56943144", client, req.body.reportStatus, {
+				reportID: req.body.reportID,
+				reportStaffName: req.body.reportStaffName
+			});
 		}
-		
+
 		res.sendStatus(200);
 		// Falta colocar aqui para enviar a mensagem steam correspondente;
 	});
