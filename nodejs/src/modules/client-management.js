@@ -1,6 +1,27 @@
 const axios = require('axios');
 const STEAM_USER = require("steam-user");
 
+
+const fs = require('fs');
+
+// Simples função para retornar os dados de determinado ficheiro;
+function processLineByLine($filePath) {
+
+  var MessageToSend = "/pre ";
+
+  try {
+      const data = fs.readFileSync($filePath, 'utf8')
+
+      MessageToSend += data;
+      //console.log(data)
+  } catch (err) {
+      console.error(err)
+  }
+
+  return MessageToSend;
+  
+}
+
 async function GetSenderNickName(steamDevKey, steamIdBase64){
   return await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${steamIdBase64}`);
 }
@@ -19,7 +40,7 @@ async function GetMembersNames(steamDevKey, base64IdMembers) {
   });
 
   return await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${base64IdsString}`);
-}
+} 
 
 function GetLastMessageData(userBase64, server_timestamp, commandName, timeout) {
   let time = new Date(server_timestamp);
@@ -37,6 +58,11 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
   client.logOn({
     accountName: accountName,
     password: password,
+  });
+
+  client.on('error', function (err) {
+    console.log(err);
+    //client.gamesPlayed(["Boosting Hours", 20, 70, 50, 9480, 300, 40, 130, 10, 730]);
   });
 
   return {
@@ -57,6 +83,7 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
       return this;
     },
     Init:function () {
+
       let oldThis = this;
       this.STEAM_CLIENT.on('friendsList', function () {
         oldThis.STEAM_CLIENT.chat.setSessionActiveGroups([17053990], async function (err, result) {
@@ -111,6 +138,12 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
       });
 
       return mentionAllMembers;
+    },
+
+    GetFileText: function(filePath) {
+      let messageToRead = processLineByLine(filePath);
+
+      return messageToRead;
     },
     Answer: function(message){
         this.STEAM_CLIENT.chat.sendChatMessage(
