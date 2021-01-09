@@ -8,11 +8,7 @@ const CLIENT_MANAGEMENT = require("./modules/client-module")({
   botAccountId: process.env.BOT_ACCOUNT_ID
 });
 
-API({port: process.env.API_PORT});
-
-console.log(process.env.BOT_ACCOUNT_ID);
-
-return;
+API({port: process.env.API_PORT}).Start();
 
 CLIENT_MANAGEMENT
 	.SetCustomState({game: "ESCRAVO", state: CLIENT_MANAGEMENT.STEAM_USER.EPersonaState.Online})
@@ -27,7 +23,8 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandCallback: async function(){
 		let mentionTag = await CLIENT_MANAGEMENT.Mention();
 		CLIENT_MANAGEMENT.Answer("/command tolo resposta " + mentionTag);
-	}});
+	}
+});
 
 CLIENT_MANAGEMENT.AddCommand({
 	commandName: "!one", 
@@ -35,7 +32,8 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandCallback: async function(){
 		let mentionTag = await CLIENT_MANAGEMENT.Mention();
 		CLIENT_MANAGEMENT.Answer("/command one " + mentionTag);
-	}});
+	}
+});
 
 CLIENT_MANAGEMENT.AddCommand({
 	commandName: "!help", 
@@ -43,7 +41,8 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandCallback: async function(){
 		let messageToRead = await CLIENT_MANAGEMENT.GetFileText(ASSETS_PATH + '/commands/help.ini');
 		CLIENT_MANAGEMENT.Answer(messageToRead);
-	}});
+	}
+});
 
 CLIENT_MANAGEMENT.AddCommand({
 	commandName: "!commandsMod", 
@@ -51,7 +50,8 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandCallback: async function(){
 		let messageToRead = await CLIENT_MANAGEMENT.GetFileText(ASSETS_PATH + '/commands/commandsMod.ini');
 		CLIENT_MANAGEMENT.Answer(messageToRead);
-	}});
+	}
+});
 
 
 CLIENT_MANAGEMENT.AddCommand({
@@ -59,4 +59,5 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandDescription: "Command Two", 
 	commandCallback: async function(){
 		CLIENT_MANAGEMENT.Answer("Boa noite juventude." + CLIENT_MANAGEMENT.MentionAll());
-	}});
+	}
+});
