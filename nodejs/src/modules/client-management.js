@@ -1,7 +1,5 @@
-const axios = require('axios');
+const AXIOS = require('axios');
 const STEAM_USER = require("steam-user");
-
-
 const fs = require('fs');
 
 // Simples função para retornar os dados de determinado ficheiro;
@@ -23,7 +21,7 @@ function processLineByLine($filePath) {
 }
 
 async function GetSenderNickName(steamDevKey, steamIdBase64){
-  return await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${steamIdBase64}`);
+  return await AXIOS.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${steamIdBase64}`);
 }
 
 async function GetMembersNames(steamDevKey, base64IdMembers) {
@@ -39,7 +37,7 @@ async function GetMembersNames(steamDevKey, base64IdMembers) {
     base64IdsString = base64IdsString + ",";
   });
 
-  return await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${base64IdsString}`);
+  return await AXIOS.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamDevKey}&steamids=${base64IdsString}`);
 } 
 
 function GetLastMessageData(userBase64, server_timestamp, commandName, timeout) {

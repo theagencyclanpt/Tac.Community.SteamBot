@@ -1,10 +1,16 @@
 require("dotenv/config");
+const ASSETS_PATH = require('path').resolve(__dirname, "./assets/");
 const CLIENT_MANAGEMENT = require("./modules/client-management")({
   accountName: process.env.ACCOUNT_NAME,
   password: process.env.ACCOUNT_PASSWORD,
   steamDevKey: process.env.STEAM_API_KEY,
-  botAccountId: 897355269
+  botAccountId: process.env.BOT_ACCOUNT_ID
 });
+
+
+console.log(process.env.BOT_ACCOUNT_ID);
+
+return;
 
 // index.js
 const express = require('express');
@@ -62,8 +68,6 @@ CLIENT_MANAGEMENT
 	.SetTimeOut(4)
 	.ChatGroupManagement();
 
-
-
 CLIENT_MANAGEMENT.AddCommand({
 	commandName: "tolo", 
 	commandDescription: "Frist Command", 
@@ -85,7 +89,7 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandName: "!help", 
 	commandDescription: "Help Command", 
 	commandCallback: async function(){
-		let messageToRead = await CLIENT_MANAGEMENT.GetFileText('D:/AgencyStuff/GitHubRepo/agency-steam-bot/nodejs/src/filesToRead/help.ini');
+		let messageToRead = await CLIENT_MANAGEMENT.GetFileText(ASSETS_PATH + '/commands/help.ini');
 		CLIENT_MANAGEMENT.Answer(messageToRead);
 	}});
 
@@ -93,7 +97,7 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandName: "!commandsMod", 
 	commandDescription: "Commands for Moderator", 
 	commandCallback: async function(){
-		let messageToRead = await CLIENT_MANAGEMENT.GetFileText('D:/AgencyStuff/GitHubRepo/agency-steam-bot/nodejs/src/filesToRead/commandsMod.ini');
+		let messageToRead = await CLIENT_MANAGEMENT.GetFileText(ASSETS_PATH + '/commands/commandsMod.ini');
 		CLIENT_MANAGEMENT.Answer(messageToRead);
 	}});
 
