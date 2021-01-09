@@ -43,6 +43,10 @@ module.exports = ({port}) => {
 		res.sendStatus(200);
 		// Falta colocar aqui para enviar a mensagem steam correspondente;
 	});
-	
-	API.listen(port, () => console.log(`Started server at http://localhost:${port}!`));
+
+	return {
+		Start: function () {
+			API.listen(port, () => console.log(`Started server at http://localhost:${port}!`));
+		}
+	}
 };
