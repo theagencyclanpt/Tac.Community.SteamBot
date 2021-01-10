@@ -10,10 +10,10 @@ const CLIENT_MANAGEMENT = require("./modules/client-module")({
 
 
 
-console.log(process.env.BOT_ACCOUNT_ID);
+//console.log(process.env.BOT_ACCOUNT_ID);
 
 CLIENT_MANAGEMENT
-	.SetCustomState({game: "ESCRAVO", state: CLIENT_MANAGEMENT.STEAM_USER.EPersonaState.Online})
+	.SetCustomState({game: "!help para Ajuda", state: CLIENT_MANAGEMENT.STEAM_USER.EPersonaState.Online})
 	.Init()
 	.SetTimeOut(4)
 	.ChatGroupManagement();
@@ -71,7 +71,6 @@ CLIENT_MANAGEMENT.AddCommand({
 	
 API({port: process.env.API_PORT, client: CLIENT_MANAGEMENT});
 
-//
 
 
 return;

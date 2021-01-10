@@ -60,7 +60,6 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
 
   client.on('error', function (err) {
     console.log(err);
-    //client.gamesPlayed(["Boosting Hours", 20, 70, 50, 9480, 300, 40, 130, 10, 730]);
   });
 
   return {
@@ -153,7 +152,6 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
           mentionOnlineMembers = mentionOnlineMembers + `[mention=${tempMemberBase64.accountid}]@${player.personaname}[/mention] `;
         }
 
-        //oldThis.ALL_MEMBERS.push({accountid: tempMemberBase64.accountid, personaname: player.personaname, steamid64 : player.steamid});
       });
       
 
@@ -168,7 +166,7 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
         this.STEAM_CLIENT.chat.sendChatMessage(
             this.CHAT_GROUP_ID,
             this.CHAT_ID,
-            message 
+            message
         );
         return this;
     },

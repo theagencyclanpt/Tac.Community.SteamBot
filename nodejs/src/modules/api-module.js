@@ -69,7 +69,7 @@ module.exports = ({port, client}) => {
 		if(req.body.reportStatus == 0){
 		
 			// Vai enviar um report, para a sala correta, tendo os dados necessários;
-			SetupReport("17053990", "56943144", client, req.body.reportStatus, {
+			SetupReport("845759", "57202892", client, req.body.reportStatus, {
 				serverName: req.body.serverName,
 				serverIP: req.body.serverIP,
 				reportID: req.body.reportID,
@@ -81,8 +81,9 @@ module.exports = ({port, client}) => {
 			});
 	
 		} else {
-
-			SetupReport("17053990", "56943144", client, req.body.reportStatus, {
+			 
+			//SetupReport("17053990", "56943144", client, req.body.reportStatus, {
+			SetupReport("845759", "57202892", client, req.body.reportStatus, {
 				reportID: req.body.reportID,
 				reportStaffName: req.body.reportStaffName
 			});
