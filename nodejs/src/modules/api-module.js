@@ -9,8 +9,10 @@ function SetupReport(groupid, chatid, client, reportStatus, reportArguments){
 	
 	var message = "/pre ";
 	if(reportStatus == 0){
+		client.MentionOnline().then(function (result){
+			client.STEAM_CLIENT.chat.sendChatMessage(groupid, chatid, result);
+		});
 		
-		client.STEAM_CLIENT.chat.sendChatMessage(groupid, chatid, client.MentionAll());
 
 		// Formata a mensagem em questão;
 		message = message +

@@ -51,6 +51,16 @@ CLIENT_MANAGEMENT.AddCommand({
 		CLIENT_MANAGEMENT.Answer(messageToRead);
 	}});
 
+CLIENT_MANAGEMENT.AddCommand({
+	commandName: "!testOnline", 
+	commandDescription: "Commands for OnlineMembers", 
+	commandCallback: async function(){
+		let variable = await CLIENT_MANAGEMENT.MentionOnline();
+		console.log(variable);
+		//let messageToRead = await CLIENT_MANAGEMENT.GetFileText(ASSETS_PATH + '/commands/commandsMod.ini');
+		//CLIENT_MANAGEMENT.Answer(messageToRead);
+	}});
+
 
 CLIENT_MANAGEMENT.AddCommand({
 	commandName: "!two", 

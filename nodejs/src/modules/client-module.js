@@ -98,7 +98,7 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
 
           players.forEach(player => {
             let tempMemberBase64 = membersBase64.find((member) => member.base64 == player.steamid);
-            oldThis.ALL_MEMBERS.push({accountid: tempMemberBase64.accountid, personaname: player.personaname});
+            oldThis.ALL_MEMBERS.push({accountid: tempMemberBase64.accountid, personaname: player.personaname, steamid64 : player.steamid});
           });
         });
       });
@@ -137,7 +137,28 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
 
       return mentionAllMembers;
     },
+    MentionOnline: async function() {
+      let mentionOnlineMembers = "";
 
+      // Vai buscar todas as informações (novamente) dos jogadores, para ver quais estão online!
+      let players = (await GetMembersNames(this.STEAM_API_KEY, this.ALL_MEMBERS.map((member) => member.steamid64))).data.response.players;
+
+
+      players.forEach(player => {
+
+        // Caso o seu personastate seja diferente de 0, significa que não está offline, logo guardamos os valores e envia-mos as mensagens;
+        if(player.personastate != 0){
+          let tempMemberBase64 = this.ALL_MEMBERS.find((member) => member.steamid64 == player.steamid);
+
+          mentionOnlineMembers = mentionOnlineMembers + `[mention=${tempMemberBase64.accountid}]@${player.personaname}[/mention] `;
+        }
+
+        //oldThis.ALL_MEMBERS.push({accountid: tempMemberBase64.accountid, personaname: player.personaname, steamid64 : player.steamid});
+      });
+      
+
+      return mentionOnlineMembers;
+    },
     GetFileText: function(filePath) {
       let messageToRead = processLineByLine(filePath);
 
