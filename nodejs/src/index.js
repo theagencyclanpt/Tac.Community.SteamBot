@@ -1,4 +1,5 @@
 require("dotenv/config");
+
 const API = require('./modules/api-module');
 const ASSETS_PATH = require('path').resolve(__dirname, "./assets/");
 const CLIENT_MANAGEMENT = require("./modules/client-module")({
@@ -68,8 +69,11 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandCallback: async function(){
 		CLIENT_MANAGEMENT.Answer("Boa noite juventude." + CLIENT_MANAGEMENT.MentionAll());
 	}});
-	
+
+console.log(process.env.API_PORT);
+
 API({port: process.env.API_PORT, client: CLIENT_MANAGEMENT});
+
 
 
 

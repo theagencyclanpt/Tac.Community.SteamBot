@@ -83,10 +83,10 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
 
       let oldThis = this;
       this.STEAM_CLIENT.on('friendsList', function () {
-        oldThis.STEAM_CLIENT.chat.setSessionActiveGroups([17053990], async function (err, result) {
+        oldThis.STEAM_CLIENT.chat.setSessionActiveGroups([845759], async function (err, result) {
           let membersBase64 = [];
 
-          result.chat_room_groups[17053990].members.forEach(member => {
+          result.chat_room_groups[845759].members.forEach(member => {
             if(oldThis.BOT_ACCOUNT_ID ==  member.steamid.accountid){
               return;
             }
@@ -168,6 +168,9 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
             this.CHAT_ID,
             message
         );
+
+        console.log("Chat ID: " + this.CHAT_ID);
+        console.log("Chat Group ID: " + this.CHAT_GROUP_ID);
         return this;
     },
     ChatGroupManagement: function()  {

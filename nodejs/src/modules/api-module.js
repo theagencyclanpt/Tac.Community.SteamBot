@@ -9,9 +9,10 @@ function SetupReport(groupid, chatid, client, reportStatus, reportArguments){
 	
 	var message = "/pre ";
 	if(reportStatus == 0){
-		client.MentionOnline().then(function (result){
+		
+		/*client.MentionOnline().then(function (result){
 			client.STEAM_CLIENT.chat.sendChatMessage(groupid, chatid, result);
-		});
+		});*/
 		
 
 		// Formata a mensagem em questão;
@@ -25,13 +26,7 @@ function SetupReport(groupid, chatid, client, reportStatus, reportArguments){
 		"Razão: " + reportArguments.reportReason + "\n" +
 		"----------------------------------------\n";
 
-		// Como vai enviar uma segunda mensagem (para conseguir enviar com o /pre), com 1 timeout de 4000
-		setTimeout(setupSomethingExtra, 4000, {
-			client : client,
-			groupid: groupid,
-			chatid: chatid,
-			message: message,
-		});
+		client.STEAM_CLIENT.chat.sendChatMessage(groupid, chatid, message);
 
 
 	} else {
@@ -49,12 +44,15 @@ function SetupReport(groupid, chatid, client, reportStatus, reportArguments){
 module.exports = ({port, client}) => {
 	const API = EXPRESS();
 	API.use(BODY_PARSE.urlencoded({ extended: true }));
+	API.use(BODY_PARSE.json());
 	
 	/*
 		Comandos utilizados para testar o as mensagens:
-		- Enviar um report novo: curl -X POST http://localhost:8080/sendReport -d "reportStatus=0" -d "serverName=[Agency PT'Fun] Portugal Sotaos | !stickers/!ws/!knife/!gloves - Waaclive.com" -d "serverIP=185.113.141.11:27029" -d "reportID=1" -d "reportQueixinhasName=O Queixinhas" -d "reportQueixinhasSteamID=STEAMID_DO_QUEIXINHAS" -d "reportAlvoName=O Alvo" -d "reportAlvoSteamID=STEAMID_DO_ALVO" -d "reportReason=Ele chamou-me burro"
+		- Enviar um report novo: curl -X POST http://51.178.16.233:8080/sendReport -d "reportStatus=0" -d "serverName=[Agency PT'Fun] Portugal Sotaos | !stickers/!ws/!knife/!gloves - Waaclive.com" -d "serverIP=185.113.141.11:27029" -d "reportID=1" -d "reportQueixinhasName=O Queixinhas" -d "reportQueixinhasSteamID=STEAMID_DO_QUEIXINHAS" -d "reportAlvoName=O Alvo" -d "reportAlvoSteamID=STEAMID_DO_ALVO" -d "reportReason=Ele chamou-me burro"
 	
-		- Enviar que um report foi resolvido: curl -X POST http://localhost:8080/sendReport -d "reportStatus=1" -d "reportID=1" -d "reportStaffName=O Staff Genial"
+		- Enviar que um report foi resolvido: curl -X POST http://51.178.16.233:8080/sendReport -d "reportStatus=1" -d "reportID=1" -d "reportStaffName=O Staff Genial"
+
+		- Comprar VIP: curl -X POST http://51.178.16.233:8080/comprarVIP -d "playerName=O Zé Manel" -d "steamID=STEAM_ID_DO_ZE_MANEL" -d "tipoPagamento=Skins CS:GO"
 	*/
 	
 	API.post('/sendReport', (req, res) => {
@@ -67,8 +65,6 @@ module.exports = ({port, client}) => {
 			- 1 -> Report resolvido;
 		*/
 		if(req.body.reportStatus == 0){
-		
-			// Vai enviar um report, para a sala correta, tendo os dados necessários;
 			SetupReport("845759", "57202892", client, req.body.reportStatus, {
 				serverName: req.body.serverName,
 				serverIP: req.body.serverIP,
@@ -81,8 +77,6 @@ module.exports = ({port, client}) => {
 			});
 	
 		} else {
-			 
-			//SetupReport("17053990", "56943144", client, req.body.reportStatus, {
 			SetupReport("845759", "57202892", client, req.body.reportStatus, {
 				reportID: req.body.reportID,
 				reportStaffName: req.body.reportStaffName
@@ -91,6 +85,32 @@ module.exports = ({port, client}) => {
 
 		res.sendStatus(200);
 		// Falta colocar aqui para enviar a mensagem steam correspondente;
+	});
+
+	API.post('/comprarVip', (req, res) => {
+		console.log("------------- DEBUG CURL POST REQUEST ----------------");
+
+		console.log("Got body: ", req.body);
+
+		// Formata a mensagem em questão;
+		message = "/quote -------------- NOVA COMPRA DE VIP -------------\n" +
+		"Nome do Jogador: " + req.body.playerName + "\n" + 
+		"Perfil do Jogador: http://steamcommunity.com/profiles/" + req.body.steamID + "\n" + 
+		"Tipo de Pagamento: " + req.body.tipoPagamento + "\n" + 
+		"----------------------------------------\n";
+
+		client.STEAM_CLIENT.chat.sendFriendMessage("[U:1:52853389]", message);
+		
+		
+		res.sendStatus(200);
+	});
+
+	
+
+	API.get('/test', (req, res) => {
+		console.log("------------- DEBUG CURL GET REQUEST ----------------");
+		
+		res.sendStatus(200);
 	});
 	
 	API.listen(port, () => console.log(`Started server at http://localhost:${port}!`));
