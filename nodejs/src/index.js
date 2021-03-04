@@ -41,6 +41,9 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandDescription: "Help Command", 
 	commandCallback: async function(){
 		let messageToRead = await CLIENT_MANAGEMENT.GetFileText(ASSETS_PATH + '/commands/help.ini');
+
+		//console.log(messageToRead);
+		console.log("Message sent!");
 		CLIENT_MANAGEMENT.Answer(messageToRead);
 	}});
 
@@ -57,9 +60,9 @@ CLIENT_MANAGEMENT.AddCommand({
 	commandDescription: "Commands for OnlineMembers", 
 	commandCallback: async function(){
 		let variable = await CLIENT_MANAGEMENT.MentionOnline();
-		console.log(variable);
+		//console.log(variable);
 		//let messageToRead = await CLIENT_MANAGEMENT.GetFileText(ASSETS_PATH + '/commands/commandsMod.ini');
-		//CLIENT_MANAGEMENT.Answer(messageToRead);
+		CLIENT_MANAGEMENT.Answer(variable);
 	}});
 
 
@@ -70,7 +73,7 @@ CLIENT_MANAGEMENT.AddCommand({
 		CLIENT_MANAGEMENT.Answer("Boa noite juventude." + CLIENT_MANAGEMENT.MentionAll());
 	}});
 
-console.log(process.env.API_PORT);
+//console.log(process.env.API_PORT);
 
 API({port: process.env.API_PORT, client: CLIENT_MANAGEMENT});
 

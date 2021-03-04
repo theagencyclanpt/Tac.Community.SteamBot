@@ -2,6 +2,7 @@ const AXIOS = require('axios');
 const STEAM_USER = require("steam-user");
 const fs = require('fs');
 
+
 // Simples função para retornar os dados de determinado ficheiro;
 function processLineByLine($filePath) {
 
@@ -113,8 +114,11 @@ module.exports = ({ accountName, password, steamDevKey, botAccountId }) => {
     },
     SetCustomState: function({game, state}) {
         this.STEAM_CLIENT.on('loggedOn', () => {
+          console.log('Steam Login com sucesso!');
           this.STEAM_CLIENT.setPersona(state);
           this.STEAM_CLIENT.gamesPlayed(game);
+
+          //this.STEAM_CLIENT.chat.sendChatMessage("845759", "2629370", "/pre Já estou online meus filhos! Qualquer coisa: !help");
         });
 
       return this;
